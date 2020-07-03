@@ -7,30 +7,42 @@
   <title>Material Design Bootstrap</title>
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-  <!-- Bootstrap core CSS -->
+  <!--&lt;!&ndash; Bootstrap core CSS &ndash;&gt;
   <link href="css/bootstrap.min.css" rel="stylesheet">
-  <!-- Material Design Bootstrap -->
+  &lt;!&ndash; Material Design Bootstrap &ndash;&gt;
   <link href="css/mdb.min.css" rel="stylesheet">
-  <link href="assests/css/styles.css" rel="stylesheet">
+  <link href="assests/css/styles.css" rel="stylesheet">-->
+     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="/assets/styles.css" rel="stylesheet" >
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     
         
     
 </head>
 <body>
-    <form class="form-inline d-flex justify-content-center md-form form-sm mt-0" action="" method="GET">    
-        <i class="fas fa-search" aria-hidden="true"></i>
-         <input class="form-control form-control-sm ml-3 w-75" type="search" name='q' placeholder="Search" aria-label="Search">
-    <button type="">Go</button>
-    {{content}}
-    </form>
-    
-    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
-    <!-- Bootstrap tooltips -->
-    <script type="text/javascript" src="js/popper.min.js"></script>
-    <!-- Bootstrap core JavaScript -->
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <!-- MDB core JavaScript -->
-    <script type="text/javascript" src="js/mdb.min.js"></script>
+     <div class="container">
+        <div class="row">
+            <h2>Wiki Search</h2>
+            <form id="custom-search-input" method="GET">
+                <div class="input-group auto-complete col-md-12">
+                    <input type="text" class="search-query form-control" name="q" id="q" placeholder="Search" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-danger" type="submit">
+                            <span class=" glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </form>
+        </div>
+        <div class="row" id="wiki-search-data">
+
+        </div>
+        <div class="row" id="pagination">
+
+        </div>
+    </div>
+    <script type="text/javascript" src="/assets/app.js"></script>
 
 </body>
 </html>

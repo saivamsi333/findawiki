@@ -1,0 +1,25 @@
+{% load static %}
+<!--<form method="get">-->
+<!--    {% csrf_token %}-->
+<!--    {{ response }}-->
+<!--    <input type="button">Download</form>-->
+<!--</form>-->
+<link rel="stylesheet" href="{% static 'css/css_1.css' %}">
+<link rel="stylesheet" href="{% static 'css/css_2.css' %}">
+
+<div>
+<a href="{% url 'pdf' %}" >Download</a>
+</div>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div>
+{% autoescape off %}
+{{ response }}
+{% endautoescape %}
+
+</div>
