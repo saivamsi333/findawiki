@@ -1,48 +1,79 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Material Design Bootstrap</title>
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-  <!--&lt;!&ndash; Bootstrap core CSS &ndash;&gt;
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-  &lt;!&ndash; Material Design Bootstrap &ndash;&gt;
-  <link href="css/mdb.min.css" rel="stylesheet">
-  <link href="assests/css/styles.css" rel="stylesheet">-->
-     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <link href="/assets/styles.css" rel="stylesheet" >
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Material Design Bootstrap</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="/assets/styles.css" rel="stylesheet">
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-    
-        
-    
+
+
 </head>
 <body>
-     <div class="container">
-        <div class="row">
-            <h2>Wiki Search</h2>
-            <form id="custom-search-input" method="GET">
-                <div class="input-group auto-complete col-md-12">
-                    <input type="text" class="search-query form-control" name="q" id="q" placeholder="Search" />
-                    <span class="input-group-btn">
+<div class="container">
+    <div class="row">
+        <h2>Wiki Search</h2>
+        <form id="custom-search-input" method="GET">
+            <div class="input-group auto-complete col-md-12">
+                <input type="text" class="search-query form-control" auto-complete="off" name="q" id="q" placeholder="Search"/>
+                <span class="input-group-btn">
                         <button class="btn btn-danger" type="submit">
                             <span class=" glyphicon glyphicon-search"></span>
                         </button>
                     </span>
+            </div>
+        </form>
+    </div>
+    <div class="row wiki-search-data" id="wiki-search-data">
+
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    {% if context %}
+    <div class="row wiki-search-results-data">
+        <div class="col-md-4">
+
+        </div>
+        <div class="col-md-8">
+
+            <h4>Total Results {{ context.totalhits }}</h4>
+
+            <div class="row search-data">
+                {% for article in context.data%}
+                <div class="row article-sec">
+                    <a href="{% url 'article'  %}?title={{article.title}}">{{article.title}}</a>
                 </div>
-            </form>
-        </div>
-        <div class="row" id="wiki-search-data">
+                <br>
+                {% endfor %}
+            </div>
 
-        </div>
-        <div class="row" id="pagination">
-
+            <div class="row" id="pagination">
+                {% if context.pagination and context.pagination.prev %}
+                <a href="{{ context.pagination.prev }}" class="button btn btn-primary">Prev</a>
+                {% endif %}
+                {% if context.pagination and context.pagination.pagination_links %}
+                {% for page_obj in context.pagination.pagination_links %}
+                <a href="{{ page_obj.page_link }}" class="button btn btn-primary">{{page_obj.page_no}}</a>
+                {% endfor %}
+                {% endif %}
+                {% if context.pagination and context.pagination.next %}
+                <a href="{{ context.pagination.next }}" class="button btn btn-primary">next</a>
+                {% endif %}
+            </div>
         </div>
     </div>
-    <script type="text/javascript" src="/assets/app.js"></script>
+    {% endif %}
+
+</div>
+<script type="text/javascript" src="{% static 'js/app.js' %}"></script>
 
 </body>
 </html>

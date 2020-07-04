@@ -72,3 +72,9 @@
     background-color: DodgerBlue !important;
     color: #ffffff;
   }
+
+   a.pdf-download-url{
+    text-align:center;
+        font-size: 20px;
+
+  }

@@ -1,25 +1,23 @@
 {% load static %}
-<!--<form method="get">-->
-<!--    {% csrf_token %}-->
-<!--    {{ response }}-->
-<!--    <input type="button">Download</form>-->
-<!--</form>-->
 <link rel="stylesheet" href="{% static 'css/css_1.css' %}">
 <link rel="stylesheet" href="{% static 'css/css_2.css' %}">
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link href="{% static 'css/styles.css' %}" rel="stylesheet">
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<div class="container">
 
-<div>
-<a href="{% url 'pdf' %}" >Download</a>
+    <div class="row">
+        <div class="col-md-3"></div>
+        <a class="button btn-primary col-md-6 pdf-download-url" href="{{pdf_download_url}}">Download as PDF</a>
+        <div class="col-md-3"></div>
+    </div>
+
+    <div class="row">
+      {% autoescape off %}
+        {{ response }}
+        {% endautoescape %}
+    </div>
+
 </div>
 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<div>
-{% autoescape off %}
-{{ response }}
-{% endautoescape %}
 
-</div>

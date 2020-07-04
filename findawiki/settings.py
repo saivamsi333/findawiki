@@ -37,12 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'wikipediaapi',
+    #'wikipediaapi',
     'wikipedia',
     'rest_framework',
     'xhtml2pdf',
 
-    'wiki_download',
     
 ]
 

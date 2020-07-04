@@ -4,9 +4,7 @@ from django.urls import path
 
 
 urlpatterns=[
-    path('search/',wiki_search,name='search'),
-    path('api/',WikiSearchAPI.as_view(),name='api'),
-    path('fetch_api/',FetchArticle.as_view(),name='fetch'),
-    path('article/',FetchArticle.as_view()),
-    path('pdf/',PdfGenerator.as_view(),name='pdf')
+    path('search/',ArticleList.as_view(),name='search'),
+    path('type_ahead_wikis/',WikiSearchAPI.as_view(),name='type_ahead_wikis'),
+    path('article/',FetchArticle.as_view(), name='article')
 ]
