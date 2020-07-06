@@ -1,8 +1,6 @@
 from django.shortcuts import render
-#from wikipediaapi import Wikipedia
 from rest_framework import views
 import requests
-import wikipedia
 from .utils import *
 from rest_framework.response import Response
 from django.http import HttpResponse
@@ -23,7 +21,10 @@ class ArticleMixin(object):
 
     def get_req_param(self,request,param_key,default_param_value):
         try:
-            param_value = request.GET.get(param_key)
+            if param_key == 'q':
+                param_value = request.GET.get(param_key)
+            else:
+                param_value = int(request.GET.get(param_key))
         except Exception:
             print('Exception while get wiki:', Exception)
 
@@ -94,7 +95,7 @@ class ArticleList(ArticleMixin,views.APIView):
 
         if not sroffset == 0:
             prev = self.fetch_pagination_link(limit,  query, sroffset)
-        range_value = total_hits // 20
+        range_value = total_hits // 50
 
         for n in range(range_value):
             offset += limit
