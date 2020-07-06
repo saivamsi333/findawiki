@@ -30,7 +30,7 @@ class ArticleMixin(object):
         param_value = param_value if param_value else default_param_value
         return param_value
 
-    def construct_req_object(self,request,default_offset,default_limit):
+    def construct_req_params(self, request, default_offset, default_limit):
         query = self.get_req_param(request,'q','')
         offset = self.get_req_param(request,'offset',default_offset)
         limit = self.get_req_param(request,'limit',default_limit)
@@ -53,8 +53,7 @@ class ArticleMixin(object):
 class WikiSearchAPI(ArticleMixin,views.APIView):
 
     def get(self,request):
-        url='https://en.wikipedia.org/w/api.php'
-        query, srlimit, sroffset = self.construct_req_object(request, 0, 5)
+        query, srlimit, sroffset = self.construct_req_params(request, 0, 5)
         if query:
             data = self.refine_search_wikis(query,sroffset,srlimit)
             return Response(data)
@@ -65,8 +64,7 @@ class WikiSearchAPI(ArticleMixin,views.APIView):
 
 class ArticleList(ArticleMixin,views.APIView):
     def get(self,request):
-        url = 'http://en.wikipedia.org/w/api.php?'
-        query,srlimit, sroffset  = self.construct_req_object(request,0,50)
+        query,srlimit, sroffset  = self.construct_req_params(request, 0, 50)
         wikis_result = {}
 
         if query:
@@ -125,12 +123,7 @@ class ArticleList(ArticleMixin,views.APIView):
 
 class FetchArticle(ArticleMixin,View):
     def get(self,request):
-        title = ''
-        try:
-            title = request.GET.get('title');
-        except Exception:
-            title = ''
-            print('error while FetchArticle')
+        title = self.get_req_param(request,'title','wikipedia')
         url = 'https://en.wikipedia.org/api/rest_v1/page/html/'+title;
         result=self.get_article(url)
         response=HttpResponse(result)
