@@ -19,7 +19,24 @@ class ArticleMixin(object):
         result = requests.get(url)
         return result
 
-    def refineSearchWikis(self,sr_search_value,sr_offset,sr_limit):
+
+
+    def get_req_param(self,request,param_key,default_param_value):
+        try:
+            param_value = request.GET.get(param_key)
+        except Exception:
+            print('Exception while get wiki:', Exception)
+
+        param_value = param_value if param_value else default_param_value
+        return param_value
+
+    def construct_req_object(self,request,default_offset,default_limit):
+        query = self.get_req_param(request,'q','')
+        offset = self.get_req_param(request,'offset',default_offset)
+        limit = self.get_req_param(request,'limit',default_limit)
+        return  query,limit,offset
+
+    def refine_search_wikis(self,sr_search_value,sr_offset,sr_limit):
         url='https://en.wikipedia.org/w/api.php'
         params = {
             'action': 'query',
@@ -37,27 +54,9 @@ class WikiSearchAPI(ArticleMixin,views.APIView):
 
     def get(self,request):
         url='https://en.wikipedia.org/w/api.php'
-        query=' '
-        try:
-            query=request.GET.get('q')
-        except Exception:
-            print('Exception while get wiki:',Exception)
-
-        srlimit=5
-        try:
-            srlimit=int(request.GET.get('limit'))
-        except Exception:
-            print('Exception while get wiki:',Exception)
-
-        sroffset = 0
-        try:
-            sroffset=int(request.GET.get('offset'))
-        except Exception:
-            print('Exception while get wiki:',Exception)
-
-        query = query if query else ' '
+        query, srlimit, sroffset = self.construct_req_object(request, 0, 5)
         if query:
-            data = self.refineSearchWikis(query,sroffset,srlimit)
+            data = self.refine_search_wikis(query,sroffset,srlimit)
             return Response(data)
         else:
             data='No required params found'
@@ -67,68 +66,61 @@ class WikiSearchAPI(ArticleMixin,views.APIView):
 class ArticleList(ArticleMixin,views.APIView):
     def get(self,request):
         url = 'http://en.wikipedia.org/w/api.php?'
-        query = ' '
-        try:
-            query = request.GET.get('q')
-        except Exception:
-            print('Exception while get wiki:', Exception)
-            query = ''
-
-        srlimit = 20
-        try:
-            srlimit = int(request.GET.get('limit'))
-        except Exception:
-            print('Exception while get wiki:', Exception)
-            srlimit = 50
-
-        sroffset = 0
-        try:
-            sroffset = int(request.GET.get('offset'))
-        except Exception:
-            print('Exception while get wiki:', Exception)
-            sroffset = 0
+        query,srlimit, sroffset  = self.construct_req_object(request,0,50)
         wikis_result = {}
-        query = query if query else ' '
-        srlimit = srlimit if srlimit else 50
-        sroffset = sroffset if sroffset else 0
-        if query:
-            response_data = self.refineSearchWikis(query, sroffset, srlimit)
-            wikis_result = response_data
 
+        if query:
+            response_data = self.refine_search_wikis(query, sroffset, srlimit)
+            wikis_result = response_data
+        context = {}
         if wikis_result and wikis_result['query']:
             data = wikis_result['query']['search']
             total_hits = wikis_result['query']['searchinfo']['totalhits']
             pagination_links = []
-            offset = 0
-            limit = srlimit
-            prev = ''
-            next = ''
-            display_no_of_links = 10
-            if not sroffset == 0:
-                prev = '/search?q='+query+"&offset="+str(sroffset)+"&limit="+str(limit)
-            range_value = total_hits//20
-            for n in range(range_value):
-                offset += limit
-                page_obj = {
-                    'page_no':(n+1),
-                    'page_link' : '/search?q=' + query + "&offset=" + str(offset) + "&limit=" + str(limit)
-                }
-                pagination_links.append(page_obj)
-            next_offset = (sroffset+limit);
-            if next_offset < total_hits:
-                next = '/search?q='+query+"&offset="+str(next_offset)+"&limit="+str(limit)
+            pagination = self.construct_pagination_links(data, pagination_links, query, srlimit, sroffset, total_hits)
             context = {
-                'totalhits':total_hits,
-                'data':data,
-                'pagination': {
-                    'pagination_links':pagination_links,
-                    'prev':prev,
-                    'next':next,
-                    'display_no_of_links':display_no_of_links
-                }
+                'totalhits': total_hits,
+                'data': data,
+                'pagination': pagination
             }
-            return render(request,'wiki_search.html',{'context':context})
 
+        return render(request,'wiki_search.html',{'context':context})
+
+
+    def construct_pagination_links(self, data, pagination_links, query, srlimit, sroffset, total_hits):
+        offset = 0
+        limit = srlimit
+        prev = ''
+        next = ''
+        display_no_of_links = 10
+
+        if not sroffset == 0:
+            prev = self.fetch_pagination_link(limit,  query, sroffset)
+        range_value = total_hits // 20
+
+        for n in range(range_value):
+            offset += limit
+            page_obj = {
+                'page_no': (n + 1),
+                'page_link':self.fetch_pagination_link(limit, query, offset)
+            }
+            pagination_links.append(page_obj)
+
+        next_offset = (sroffset + limit)
+
+        if next_offset < total_hits:
+            next = self.fetch_pagination_link(limit,  query, next_offset)
+
+        return {
+                'pagination_links': pagination_links,
+                'prev': prev,
+                'next': next,
+                'display_no_of_links': display_no_of_links
+            }
+
+    def fetch_pagination_link(self, limit,  query, sroffset):
+        pagination_link = '/search?q=' + query + "&offset=" + str(sroffset) + "&limit=" + str(limit)
+        return pagination_link
 
 
 class FetchArticle(ArticleMixin,View):
