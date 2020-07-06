@@ -20,6 +20,7 @@ class ArticleMixin(object):
 
 
     def get_req_param(self,request,param_key,default_param_value):
+        param_value = None
         try:
             if param_key == 'q':
                 param_value = request.GET.get(param_key)
